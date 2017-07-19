@@ -1,0 +1,8 @@
+LIBRARY svflow
+EXPORTS
+
+	svflow_open
+	svflow_close
+	svflow_get_samples
+	svflow_start
+	svflow_stop

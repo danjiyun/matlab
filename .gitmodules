@@ -1,0 +1,3 @@
+[submodule "board/max35103evkit2"]
+	path = board/max35103evkit2
+	url = git@github.com:maxim-ic-flow/max35103evkit2.git
