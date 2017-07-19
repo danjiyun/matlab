@@ -7,7 +7,7 @@ Host software components (DLL) requries Microsoft Visual Studio.
 
 Matlab is required to run the host-side examples.
 
-This example shows how to extract ultrasonic time-of-flight data from the MAX3510x and transmit it to a host PC running Matlab for analysis.
+This example shows how to extract ultrasonic time-of-flight data from the MAX3510x and transmit it to a host PC running Matlab for analysis.  Please see matlab/matlab.pdf for details.
 
 Please note that this respository uses git submodules. The proper way to clone is:
 
