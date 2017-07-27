@@ -12,7 +12,7 @@ Please see [matlab/matlab.pdf](https://github.com/maxim-ic-flow/matlab/blob/mast
 Please note that this project uses git submodules.  The proper way to clone this repository is as follows:
 
 ```
-git clone --recursive https://github.com/maxim-ic-flow/volumetric.git
+git clone --recursive https://github.com/maxim-ic-flow/matlab.git
 ```
 To switch between branches:
 
