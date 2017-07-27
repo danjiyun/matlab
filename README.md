@@ -1,5 +1,5 @@
 # matlab
-Example application for the MAX35103EVKIT2 and MAX35104EVKIT2.
+Example application using Maxim Integrated's MAX35103EVKIT2
 
 # Overview
 
