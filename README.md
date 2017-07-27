@@ -28,6 +28,6 @@ git submodule update --recursive --remote
 <b>Microsoft Visual Studio (Community 2015)</b>
 <p>https://www.visualstudio.com/
 
-<b>Matlab 2016a+ (other versions may work)
+<b>Matlab 2016a+ (other versions may work)</b>
 <p>https://www.mathworks.com/products/matlab.html
   
