@@ -5,7 +5,7 @@ Example application using Maxim Integrated's MAX35103EVKIT2
 
 This application example uses the MAX35103EVKIT2 to demonstrate transfering data from an embedded system into Matlab running on a Windows PC via UART.  The protcol library is designed to be portable.
 
-Please see matlab/matlab.pdf for details.
+Please see [matlab/matlab.pdf](https://github.com/maxim-ic-flow/matlab/blob/master/matlab.pdf) for details.
 
 ## Repository
 
