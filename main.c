@@ -34,11 +34,11 @@
 #include "global.h"
 
 #include "tmr_utils.h"
-#include "max3510x.h"
 #include "serialize.h"
 #include "com.h"
-#include "transducer.h"
+
 #include "board.h"
+#include "transducer.h"
 
 #include <tmr.h>
 
@@ -208,7 +208,7 @@ static bool serialize_cb(void *pv_context, const void *pv_packet, uint16_t lengt
 
 int main(void)
 {
-	board_init(BOARD_J3_UART);
+	board_init();
 
 	NVIC_EnableIRQ(MXC_GPIO_GET_IRQ(g_board_max3510x_int.port));
 	GPIO_IntEnable(&g_board_max3510x_int);

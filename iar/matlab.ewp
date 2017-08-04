@@ -1099,6 +1099,9 @@
         <name>$PROJ_DIR$\..\board\max35103evkit2\csl\PeriphDriver\Include\mxc_errors.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\..\..\test\trunk\board\max35103evkit2\csl\PeriphDriver\Source\mxc_lock.c</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\board\max35103evkit2\csl\PeriphDriver\Include\mxc_lock.h</name>
       </file>
       <file>
