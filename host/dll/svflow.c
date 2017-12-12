@@ -80,7 +80,7 @@ static bool serialize_cb(void *pv_context, const void *pv_data, uint16_t length)
 	context_t * p_context = (context_t *)pv_context;
 	const com_union_t *p_packet = (const com_union_t*)pv_data;
 	
-	if (length != p_packet->hdr.size || com_checksum(pv_data, length))
+	if (length != p_packet->hdr.size || com_checksum(pv_data, (uint8_t)length))
 		return false;  // packet error detected -- simply drop the packet
 
 	if (p_packet->hdr.id == COM_ID_DEVICE_FLOW_SAMPLE )

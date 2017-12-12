@@ -56,8 +56,8 @@ typedef struct _timestamped_results_t
 	uint32_t			sequence;	// sequence number
 	uint32_t			timestamp;	// 96MHz timestamp
 	result_status_t		status;		// flags problems with the results field below
-	max3510x_results_t	results;	// contains regiters values from the MAX3510x
-
+	max3510x_tof_results_t	tof_results;	// contains regiters values from the MAX3510x
+	max3510x_temp_results_t	temp_results;	// contains regiters values from the MAX3510x
 }
 timestamped_results_t;
 
@@ -94,7 +94,8 @@ void max3510x_int_isr(void * pv)
 
 	if( (status & (MAX3510X_REG_INTERRUPT_STATUS_TOF|MAX3510X_REG_INTERRUPT_STATUS_TO)) == MAX3510X_REG_INTERRUPT_STATUS_TOF )
 	{
-		max3510x_read_results( &g_max35103, &s_ts_results[s_results_write_ndx].results );
+		max3510x_read_tof_results( &g_max35103, &s_ts_results[s_results_write_ndx].tof_results );
+		max3510x_read_temp_results( &g_max35103, &s_ts_results[s_results_write_ndx].temp_results );
 		if(  s_sample_state == sample_state_isr_pending )
 		{
 			// write into the circular buffer.  writes are guaranteed
@@ -102,8 +103,8 @@ void max3510x_int_isr(void * pv)
 
 			// validate the measuremnt.
 			// validation failures suggest SPI problems.
-			if( max3510x_validate_measurement(&s_ts_results[s_results_write_ndx].results.up, transducer_hit_count()) &&
-				max3510x_validate_measurement(&s_ts_results[s_results_write_ndx].results.down, transducer_hit_count()) )
+			if( max3510x_validate_measurement(&s_ts_results[s_results_write_ndx].tof_results.up, transducer_hit_count()) &&
+				max3510x_validate_measurement(&s_ts_results[s_results_write_ndx].tof_results.down, transducer_hit_count()) )
 			{
 				s_ts_results[s_results_write_ndx].status = result_status_valid;
 			} 
@@ -147,7 +148,7 @@ void max3510x_int_isr(void * pv)
 	{
 		s_sample_state = sample_state_idle;
 	}
-	GPIO_IntClr(&g_board_max3510x_int);
+	board_max3510x_clear_interrupt();
 }
 
 void SysTick_Handler(void)
@@ -208,10 +209,7 @@ static bool serialize_cb(void *pv_context, const void *pv_packet, uint16_t lengt
 
 int main(void)
 {
-	board_init();
-
-	NVIC_EnableIRQ(MXC_GPIO_GET_IRQ(g_board_max3510x_int.port));
-	GPIO_IntEnable(&g_board_max3510x_int);
+	board_init(max3510x_int_isr);
 
 	{
 		static uint8_t s_decode_buffer[COM_MAX_PACKET_SIZE * 2];
@@ -233,26 +231,29 @@ int main(void)
 			ts = s_ts_results[s_results_read_ndx].timestamp;
 			sum_ts_delta += (ts - last_ts);
 			last_ts = ts;
-			max3510x_float_results_t f_results;
-			max3510x_convert_results( &f_results, &s_ts_results[s_results_read_ndx].results );
+			max3510x_float_tof_results_t f_tof_results;
+			max3510x_float_temp_results_t f_temp_results;
+			
+			max3510x_convert_tof_results( &f_tof_results, &s_ts_results[s_results_read_ndx].tof_results );
+			max3510x_convert_temp_results( &f_temp_results, &s_ts_results[s_results_read_ndx].temp_results );
 			if( s_send_samples )
 			{
 				com_device_flow_sample_t sample;
-				sample.up.t2_ideal = f_results.up.t2_ideal;
-				sample.up.t1_t2 = f_results.up.t1_t2;
+				sample.up.t2_ideal = f_tof_results.up.t2_ideal;
+				sample.up.t1_t2 = f_tof_results.up.t1_t2;
 				for (uint32_t i=0;i<MIN(MAX_HITCOUNT,MAX3510X_MAX_HITCOUNT);i++)
-					sample.up.hit[i] = f_results.up.hit[i];
-				sample.up.average =  f_results.up.average;
+					sample.up.hit[i] = f_tof_results.up.hit[i];
+				sample.up.average =  f_tof_results.up.average;
 
-				sample.down.t2_ideal = f_results.down.t2_ideal;
-				sample.down.t1_t2 = f_results.down.t1_t2;
+				sample.down.t2_ideal = f_tof_results.down.t2_ideal;
+				sample.down.t1_t2 = f_tof_results.down.t1_t2;
 				for (uint32_t i=0;i<MIN(MAX_HITCOUNT,MAX3510X_MAX_HITCOUNT);i++)
-					sample.down.hit[i] = f_results.down.hit[i];
-				sample.down.average =  f_results.down.average;
-				sample.tof_diff = f_results.tof_diff;
+					sample.down.hit[i] = f_tof_results.down.hit[i];
+				sample.down.average =  f_tof_results.down.average;
+				sample.tof_diff = f_tof_results.tof_diff;
 				sample.timestamp = ts;
-				sample.temp_ref = f_results.temp[1];
-				sample.temp_sense = f_results.temp[0];
+				sample.temp_ref = f_temp_results.temp[1];
+				sample.temp_sense = f_temp_results.temp[0];
 				com_tx( &s_com, &sample, COM_ID_DEVICE_FLOW_SAMPLE, sizeof(sample) );
 			}
 
